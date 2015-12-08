@@ -1,0 +1,469 @@
+package tk.shadowcube.snowball;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
+
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+
+import com.connorlinfoot.titleapi.TitleAPI;
+
+@SuppressWarnings("deprecation")
+public class Snowball implements Listener{
+
+	private main plugin;
+	public Snowball(main p){
+		this.plugin = p;
+		
+		p.getServer().getPluginManager().registerEvents(this, plugin);
+	}
+	int sched;
+	int sched2;
+	
+	@EventHandler
+	public void onCommand2(PlayerCommandPreprocessEvent e){
+		if(e.getMessage().equals("/snowball join")){
+			World w = Bukkit.getServer().getWorld(plugin.getConfig().getString("Snowball.Spawn1.Worldname"));
+			World w2 = e.getPlayer().getWorld();
+			if(!(w == w2)){
+				updateScoreboard(e.getPlayer());
+			}
+		}
+	}
+	
+	@EventHandler
+	public void Damager(final EntityDamageByEntityEvent e){
+		Entity target1 = e.getEntity();
+		Entity attacker1 = e.getDamager();
+		File file = new File("plugins//SnowballFight//players.yml");
+		YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
+		
+		if(attacker1 instanceof org.bukkit.entity.Snowball){
+			if(target1 instanceof Player){
+				World w = Bukkit.getServer().getWorld(plugin.getConfig().getString("Snowball.Spawn1.Worldname"));
+				World w2 = e.getEntity().getWorld();
+				if(w == w2){
+					Player p = (Player)target1;
+					Player shooter = (Player) ((Projectile) e.getDamager()).getShooter();
+					if(!p.getName().equals(shooter.getName())){
+						if(players.getInt("Players." + shooter.getName() + ".BlindnessBall") > 0){
+							players.set("Players." + shooter.getName() + ".BlindnessBall", players.getInt("Players." + shooter.getName() + ".BlindnessBall") -1);
+							try {
+								players.save(file);
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}
+						
+							if(players.getInt("Players." + shooter.getName() + ".BlindnessBall") == 1){
+								ArrayList<String> lore3 = new ArrayList<>();
+								ItemStack item3 = new ItemStack(Material.FIREWORK_CHARGE);
+								ItemMeta meta3 = item3.getItemMeta();
+								meta3.setDisplayName("§81x §eBlindnessBall");
+								lore3.add("§5Makes your enemies blind!");
+								meta3.setLore(lore3);
+								item3.setItemMeta(meta3);
+								shooter.getInventory().setItem(7, item3);
+							}else{
+								ItemStack item31 = new ItemStack(Material.SUGAR);
+								ItemMeta meta31 = item31.getItemMeta();
+								meta31.setDisplayName("§7Special-Itemslot");
+								item31.setItemMeta(meta31);
+								shooter.getInventory().setItem(7, item31);
+							}
+						
+							double damage = 5.0;
+							if(p.getInventory().getHelmet() != null){
+								p.getInventory().getHelmet().setDurability((short) 0);
+								damage = damage - 0.25;
+							}
+							if(p.getInventory().getChestplate() != null){
+								p.getInventory().getChestplate().setDurability((short) 0);
+								damage = damage - 0.25;
+							}
+							if(p.getInventory().getLeggings() != null){
+								p.getInventory().getLeggings().setDurability((short) 0);
+								damage = damage - 0.25;
+							}
+							if(p.getInventory().getBoots() != null){
+								p.getInventory().getBoots().setDurability((short) 0);
+								damage = damage - 0.25;
+							}
+							plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "effect " + p.getName() + " minecraft:blindness 6 0");
+							e.setDamage(damage);
+						
+						}else{
+							if(players.getInt("Players." + shooter.getName() + ".Grenade") == 1){
+								return;
+							}else{
+								Player p1 = (Player)target1;
+								double damage = 5.0;
+								if(p1.getInventory().getHelmet() != null){
+									p1.getInventory().getHelmet().setDurability((short) 0);
+									damage = damage - 0.25;
+								}
+								if(p1.getInventory().getChestplate() != null){
+									p1.getInventory().getChestplate().setDurability((short) 0);
+									damage = damage - 0.25;
+								}
+								if(p1.getInventory().getLeggings() != null){
+									p1.getInventory().getLeggings().setDurability((short) 0);
+									damage = damage - 0.25;
+								}
+								if(p1.getInventory().getBoots() != null){
+									p1.getInventory().getBoots().setDurability((short) 0);
+									damage = damage - 0.25;
+								}
+								e.setDamage(damage);
+							}
+						}
+						}else{
+							shooter.sendMessage("§cYou can't kill yourself!");
+							e.setDamage(0);
+					}
+				}
+			}
+		}
+		final Entity target = target1;
+		final Entity attacker = attacker1;
+		
+			Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+				
+				@Override
+				public void run() {
+					if(target instanceof Player){
+						if(attacker instanceof org.bukkit.entity.Snowball){
+						if(target.isDead()){
+							World w = Bukkit.getServer().getWorld(plugin.getConfig().getString("Snowball.Spawn1.Worldname"));
+							World w2 = e.getEntity().getWorld();
+							if(w == w2){
+								
+							Random rand = new Random();
+							final int chance = rand.nextInt(100);
+							
+							final Player p = (Player) target;
+							final Player shooter = (Player) ((Projectile) e.getDamager()).getShooter();
+							shooter.playSound(shooter.getLocation(), Sound.ORB_PICKUP, 1F, 1F);
+							shooter.sendMessage("§7You §akilled §e" + target.getName() + "§7!");
+							if(chance < plugin.getConfig().getInt("Snowball.ChanceToBecomeAToken")){
+							shooter.sendMessage("§7+ " + plugin.getConfig().getInt("Snowball.AmountOfTokens") +" §eToken!");
+							}
+							p.sendMessage("§7You was §4killed §7by §e" + shooter.getName() + "§7!");
+							
+								Bukkit.getScheduler().runTask(plugin, new Runnable(){
+
+									@Override
+									public void run() {
+											File file = new File("plugins//SnowballFight//players.yml");
+											YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
+											players.set("Players." + shooter.getName() + ".Kills", players.getInt("Players." + shooter.getName() + ".Kills") + 1);
+											if(chance < plugin.getConfig().getInt("Snowball.ChanceToBecomeAToken")){
+											int tokens = plugin.getConfig().getInt("Snowball.AmountOfTokens");
+											players.set("Players." + shooter.getName() + ".Tokens", players.getInt("Players." + shooter.getName() + ".Tokens") + tokens);
+											}
+											try {
+												players.save(file);
+											} catch (IOException e) {
+												e.printStackTrace();
+											}
+											
+											for(Player p2: p.getWorld().getPlayers()){
+												p2.hidePlayer((Player) target);
+											}
+											Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){		
+												@Override
+												public void run() {
+													updateScoreboard(shooter);
+												}
+											}, 10);
+									}
+								});
+								
+							Respawn(p);
+							}
+						}
+						}
+					}
+				}
+			});
+		
+		target1 = null;
+		attacker1 = null;
+		return;
+	}
+	
+	@EventHandler
+	public void onDeath(PlayerDeathEvent e){
+		World w = Bukkit.getServer().getWorld(plugin.getConfig().getString("Snowball.Spawn1.Worldname"));
+		World w2 = e.getEntity().getWorld();
+		if(w == w2){
+			e.setKeepInventory(true);
+			e.setDeathMessage(null);
+		}
+	}
+	
+	public void Respawn(final Player p){
+		Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
+
+			@Override
+			public void run() {
+				p.spigot().respawn();
+				Random rand = new Random();
+				int spawnpoint = rand.nextInt(2);
+				
+				if(spawnpoint == 0){
+					Location loc = p.getLocation();
+					double x = plugin.getConfig().getDouble("Snowball.Spawn1.X");
+					double y = plugin.getConfig().getDouble("Snowball.Spawn1.Y");
+					double z = plugin.getConfig().getDouble("Snowball.Spawn1.Z");
+					double pitch = plugin.getConfig().getDouble("Snowball.Spawn1.Pitch");
+					double yaw = plugin.getConfig().getDouble("Snowball.Spawn1.Yaw");
+					String worldname = plugin.getConfig().getString("Snowball.Spawn1.Worldname");
+					World world = Bukkit.getWorld(worldname);
+					
+					loc.setX(x);
+					loc.setY(y);
+					loc.setZ(z);
+					loc.setPitch((float) pitch);
+					loc.setYaw((float) yaw);
+					loc.setWorld(world);
+					p.setGameMode(GameMode.SURVIVAL);
+					p.teleport(loc);
+				}else{
+					Location loc = p.getLocation();
+					double x = plugin.getConfig().getDouble("Snowball.Spawn2.X");
+					double y = plugin.getConfig().getDouble("Snowball.Spawn2.Y");
+					double z = plugin.getConfig().getDouble("Snowball.Spawn2.Z");
+					double pitch = plugin.getConfig().getDouble("Snowball.Spawn2.Pitch");
+					double yaw = plugin.getConfig().getDouble("Snowball.Spawn2.Yaw");
+					String worldname = plugin.getConfig().getString("Snowball.Spawn2.Worldname");
+					World world = Bukkit.getWorld(worldname);
+					
+					loc.setX(x);
+					loc.setY(y);
+					loc.setZ(z);
+					loc.setPitch((float) pitch);
+					loc.setYaw((float) yaw);
+					loc.setWorld(world);
+					p.setGameMode(GameMode.SURVIVAL);
+					p.teleport(loc);
+				}
+				
+				p.setAllowFlight(false);
+				p.playSound(p.getLocation(), Sound.FIZZ, 1F, 1F);
+				clearScoreboard(p);
+				File file = new File("plugins//SnowballFight//players.yml");
+				YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
+				
+					players.set("Players." + p.getName() + ".Deaths", players.getInt("Players." + p.getName() + ".Deaths") + 1);
+					try {
+						players.save(file);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				
+				Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable(){
+					@Override
+					public void run() {
+						TitleAPI.sendTitle(p, 0, 20, 0, "§a3",null);
+					}
+				}, 20);
+				
+				Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable(){
+					@Override
+					public void run() {
+						TitleAPI.sendTitle(p, 0, 20, 0, "§a2",null);
+					}
+				}, 40);
+				
+				Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable(){
+					@Override
+					public void run() {
+						TitleAPI.sendTitle(p, 0, 20, 0, "§a1",null);
+					}
+				}, 60);
+				
+				Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
+					@Override
+					public void run() {
+						for(Player p2: p.getWorld().getPlayers()){
+							p2.showPlayer(p);
+						}
+						p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1F, 1F);
+					}
+				}, 80);	
+				
+				Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
+					@Override
+					public void run() {
+						updateScoreboard(p);
+					}
+				}, 90);
+			}
+		}, 10);
+	}
+	
+	@EventHandler
+	public void onClick(PlayerInteractEvent e){
+		final Player p = e.getPlayer();
+		World w = Bukkit.getServer().getWorld(plugin.getConfig().getString("Snowball.Spawn1.Worldname"));
+		World w2 = p.getWorld();
+		
+		if(w == w2){
+			if(p.getItemInHand().getType() == Material.SLIME_BALL){
+				if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK){
+					if(plugin.getConfig().getBoolean("Snowball.EnableBungeecord") == false){
+						Location loc = p.getLocation();
+						File file = new File("plugins//SnowballFight//joincoords.yml");
+						YamlConfiguration coords = YamlConfiguration.loadConfiguration(file);
+						File file1 = new File("plugins//SnowballFight//players.yml");
+						YamlConfiguration players = YamlConfiguration.loadConfiguration(file1);
+						p.getInventory().clear();
+						p.getInventory().setArmorContents(null);
+				
+						players.set("Players." + p.getName() + ".Tokens", 0);
+						players.set("Players." + p.getName() + ".BlindnessBall", 0);
+						players.set("Players." + p.getName() + ".Knife", 0);
+						players.set("Players." + p.getName() + ".Grenade", 0);
+						try {
+							players.save(file1);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+				
+						double x = coords.getDouble("Players." + p.getName() + ".X");
+						double y = coords.getDouble("Players." + p.getName() + ".Y");
+						double z = coords.getDouble("Players." + p.getName() + ".Z");
+						double pitch = coords.getDouble("Players." + p.getName() + ".Pitch");
+						double yaw = coords.getDouble("Players." + p.getName() + ".Yaw");
+						String worldname = coords.getString("Players." + p.getName() + ".Worldname");
+						World world = Bukkit.getWorld(worldname);
+				
+						loc.setX(x);
+						loc.setY(y);
+						loc.setZ(z);
+						loc.setPitch((float)pitch);
+						loc.setYaw((float)yaw);
+						loc.setWorld(world);
+						p.teleport(loc);
+				
+						Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
+							@Override
+							public void run() {
+								clearScoreboard(p);
+							}
+						}, 15);
+					}else{
+						Location loc = p.getLocation();
+						File file = new File("plugins//SnowballFight//joincoords.yml");
+						YamlConfiguration coords = YamlConfiguration.loadConfiguration(file);
+						File file1 = new File("plugins//SnowballFight//players.yml");
+						YamlConfiguration players = YamlConfiguration.loadConfiguration(file1);
+						p.getInventory().clear();
+						p.getInventory().setArmorContents(null);
+				
+						players.set("Players." + p.getName() + ".Tokens", 0);
+						players.set("Players." + p.getName() + ".BlindnessBall", 0);
+						players.set("Players." + p.getName() + ".Knife", 0);
+						players.set("Players." + p.getName() + ".Grenade", 0);
+						try {
+							players.save(file1);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+				
+						double x = coords.getDouble("Players." + p.getName() + ".X");
+						double y = coords.getDouble("Players." + p.getName() + ".Y");
+						double z = coords.getDouble("Players." + p.getName() + ".Z");
+						double pitch = coords.getDouble("Players." + p.getName() + ".Pitch");
+						double yaw = coords.getDouble("Players." + p.getName() + ".Yaw");
+						String worldname = coords.getString("Players." + p.getName() + ".Worldname");
+						World world = Bukkit.getWorld(worldname);
+				
+						loc.setX(x);
+						loc.setY(y);
+						loc.setZ(z);
+						loc.setPitch((float)pitch);
+						loc.setYaw((float)yaw);
+						loc.setWorld(world);
+						p.teleport(loc);
+						
+						ByteArrayOutputStream b = new ByteArrayOutputStream();
+						DataOutputStream out = new DataOutputStream(b);
+						 
+						try {
+						    out.writeUTF("Connect");
+						    out.writeUTF(plugin.getConfig().getString("Snowball.Fallbackserver"));
+						} catch (IOException ex) {
+						}
+						p.sendPluginMessage(this.plugin, "BungeeCord", b.toByteArray());
+					}
+				}
+			}
+		}
+	}
+	
+	public void clearScoreboard(Player p) {
+        Scoreboard board = null;
+        board = p.getScoreboard();
+       
+        if(board == null)
+            return;
+       
+        Objective obj = board.getObjective("aaa");
+        if(obj != null)
+            obj.unregister();
+        board.clearSlot(DisplaySlot.SIDEBAR);
+        p.setScoreboard(board);
+    }
+	
+	public void updateScoreboard(Player p) {
+				File file = new File("plugins//SnowballFight//players.yml");
+				YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
+				int kills = players.getInt("Players." + p.getName() + ".Kills");
+				int deaths = players.getInt("Players." + p.getName() + ".Deaths");
+				Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
+				Objective obj = board.registerNewObjective("aaa", "bbb");
+				
+				obj.setDisplayName("§L§9[§7Snowball Fight!§9]§R");
+				obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+				
+				Score four = obj.getScore(Bukkit.getOfflinePlayer("§4§LKills§9: "));
+				Score three = obj.getScore(Bukkit.getOfflinePlayer("§a>§b " + kills + " §a<"));
+				Score two = obj.getScore(Bukkit.getOfflinePlayer("§4§LDeaths§9: "));
+				Score one = obj.getScore(Bukkit.getOfflinePlayer("§a>§b " + deaths + " §a<"));
+				Score zero = obj.getScore(Bukkit.getOfflinePlayer("§9=============§R"));
+				
+				four.setScore(4);
+				three.setScore(3);
+				two.setScore(2);
+				one.setScore(1);
+				zero.setScore(0);
+				
+				p.setScoreboard(board);
+			}
+}

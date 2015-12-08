@@ -1,0 +1,8 @@
+name: SnowballFight
+main: tk.shadowcube.snowball.main
+version: 1.0
+author: Shadowsky
+commands:
+  snowball:
+    usage: /snowball
+    description: <command>
