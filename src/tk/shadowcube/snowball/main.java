@@ -60,7 +60,7 @@ public class main extends JavaPlugin{
 		private void initConfig(){
 			this.reloadConfig();
 			
-			this.getConfig().options().header("Snowball Fight! v.1.0");
+			this.getConfig().options().header("Snowball Fight! v.1.1");
 			this.getConfig().addDefault("Snowball.Spawn1.X", 0);
 			this.getConfig().addDefault("Snowball.Spawn1.Y", 0);
 			this.getConfig().addDefault("Snowball.Spawn1.Z", 0);
@@ -520,14 +520,29 @@ public class main extends JavaPlugin{
 													return true;
 												}
 											}else{
-												p.sendMessage("§6>§e> §bSnowball §e<§6< §7You can use:");
-												p.sendMessage("§7/snowball setspawn1");
-												p.sendMessage("§7/snowball setspawn2");
-												p.sendMessage("§7/snowball spawnsnowman");
-												p.sendMessage("§7/snowball join");
-												p.sendMessage("§7/snowball togglebuild");
-												p.sendMessage("§7/snowball reload");
-												return true;
+												if(args[0].equalsIgnoreCase("killsnowman")){
+													if(p.hasPermission("snowball.admin")){
+														File file = new File("plugins//SnowballFight//players.yml");
+														YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
+														players.set("Players." + p.getName() + ".KillSnowMan", true);
+														try {
+															players.save(file);
+														} catch (IOException e) {
+															e.printStackTrace();
+														}
+														p.sendMessage("§6>§e> §bSnowball §e<§6< §7Now attack the snowman you want to remove!");
+														return true;
+													}
+												}else{
+													p.sendMessage("§6>§e> §bSnowball §e<§6< §7You can use:");
+													p.sendMessage("§7/snowball setspawn1");
+													p.sendMessage("§7/snowball setspawn2");
+													p.sendMessage("§7/snowball spawnsnowman");
+													p.sendMessage("§7/snowball join");
+													p.sendMessage("§7/snowball togglebuild");
+													p.sendMessage("§7/snowball reload");
+													return true;
+												}
 											}
 										}
 									}
