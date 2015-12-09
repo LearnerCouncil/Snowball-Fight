@@ -37,6 +37,7 @@ public class main extends JavaPlugin{
 		new KnifeKill(this);
 		new GrenadeKill(this);
 		new SnowMan(this);
+		new UpdateShop(this);
 		
 		initConfig();
 		Player();
@@ -60,7 +61,7 @@ public class main extends JavaPlugin{
 		private void initConfig(){
 			this.reloadConfig();
 			
-			this.getConfig().options().header("Snowball Fight! v.1.1");
+			this.getConfig().options().header("Snowball Fight! v.1.2");
 			this.getConfig().addDefault("Snowball.Spawn1.X", 0);
 			this.getConfig().addDefault("Snowball.Spawn1.Y", 0);
 			this.getConfig().addDefault("Snowball.Spawn1.Z", 0);
