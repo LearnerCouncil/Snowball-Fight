@@ -276,7 +276,7 @@ public class EventListener implements Listener{
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onInventoryClick3(InventoryClickEvent e){
 		try{
-		if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§7Special-Itemslot") || e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§1") || e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§eProfile: §5" + e.getWhoClicked().getName())){
+		if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§7Special-Itemslot") || e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§1") || e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§eProfile: §5" + e.getWhoClicked().getName()) || e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§81x §eBlindnessBall")){
 			e.setCancelled(true);
 		}
 		} catch(NullPointerException ex){

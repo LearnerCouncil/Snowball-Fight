@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,6 +16,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -38,6 +43,7 @@ public class main extends JavaPlugin{
 		new GrenadeKill(this);
 		new SnowMan(this);
 		new UpdateShop(this);
+		new ShopTheme(this);
 		
 		initConfig();
 		Player();
@@ -61,7 +67,7 @@ public class main extends JavaPlugin{
 		private void initConfig(){
 			this.reloadConfig();
 			
-			this.getConfig().options().header("Snowball Fight! v.1.2");
+			this.getConfig().options().header("Snowball Fight! v.1.3");
 			this.getConfig().addDefault("Snowball.Spawn1.X", 0);
 			this.getConfig().addDefault("Snowball.Spawn1.Y", 0);
 			this.getConfig().addDefault("Snowball.Spawn1.Z", 0);
@@ -153,9 +159,6 @@ public class main extends JavaPlugin{
 					e.printStackTrace();
 				}
 			}
-		
-		int sched;
-		int sched2;
 		int sched3;
 		
 		public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
@@ -585,5 +588,53 @@ public class main extends JavaPlugin{
 					}
 				}
 			}, 2, 2);
+		}
+		
+		public void onHit(Player p){
+			Location loc = p.getLocation();
+			loc.setY(loc.getY() + 1);
+			
+			p.getWorld().playEffect(loc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK, 5);
+		}
+		
+		public void clearScoreboard(Player p) {
+	        Scoreboard board = null;
+	        board = p.getScoreboard();
+	       
+	        if(board == null)
+	            return;
+	       
+	        Objective obj = board.getObjective("aaa");
+	        if(obj != null)
+	            obj.unregister();
+	        board.clearSlot(DisplaySlot.SIDEBAR);
+	        p.setScoreboard(board);
+	    }
+		
+		@SuppressWarnings("deprecation")
+		public void updateScoreboard(Player p) {
+			File file = new File("plugins//SnowballFight//players.yml");
+			YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
+			int kills = players.getInt("Players." + p.getName() + ".Kills");
+			int deaths = players.getInt("Players." + p.getName() + ".Deaths");
+			Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
+			Objective obj = board.registerNewObjective("aaa", "bbb");
+					
+			obj.setDisplayName("§L§9[§7Snowball Fight!§9]§R");
+			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+					
+			Score four = obj.getScore(Bukkit.getOfflinePlayer("§4§LKills§9: "));
+			Score three = obj.getScore(Bukkit.getOfflinePlayer("§a>§b " + kills + " §a<"));
+			Score two = obj.getScore(Bukkit.getOfflinePlayer("§4§LDeaths§9: "));
+			Score one = obj.getScore(Bukkit.getOfflinePlayer("§a>§b " + deaths + " §a<"));
+			Score zero = obj.getScore(Bukkit.getOfflinePlayer("§9=============§R"));
+					
+			four.setScore(4);
+			three.setScore(3);
+			two.setScore(2);
+			one.setScore(1);
+			zero.setScore(0);
+					
+			p.setScoreboard(board);
 		}
 }

@@ -2,7 +2,6 @@ package tk.shadowcube.snowball;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -16,7 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -31,7 +29,6 @@ public class TokenShop implements Listener{
 		
 		p.getServer().getPluginManager().registerEvents(this, plugin);
 	}
-	private HashMap<String, Integer> tasks = new HashMap<>();
 	
 	int slot = 0;
 	@SuppressWarnings("deprecation")
@@ -47,82 +44,6 @@ public class TokenShop implements Listener{
 							final YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
 							int tokens = players.getInt("Players." + p.getName() + ".Tokens");
 							final Inventory inv = Bukkit.createInventory(null, 27, "§8Shop | §eYour Tokens: §5" + tokens);
-							
-							this.tasks.put(p.getName(), Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new Runnable() {
-					               public void run() {
-					            	   if(slot < 9){
-					            	   		ItemStack item = new ItemStack(Material.STAINED_GLASS_PANE, 1,(byte) 13);
-					            	   		ItemMeta meta = item.getItemMeta();
-					            	   		meta.setDisplayName("§1");
-					            	   		item.setItemMeta(meta);
-					            	   		inv.setItem(slot, item);
-					            	   		p.playSound(p.getLocation(), Sound.DIG_STONE, 1F, 1F);
-					            	   		if(slot == 1){
-					            	   			ItemStack item1 = new ItemStack(Material.STAINED_GLASS_PANE, 1,(byte) 14);
-							            	   	ItemMeta meta1 = item1.getItemMeta();
-							            	   	meta1.setDisplayName("§1");
-							            	   	item1.setItemMeta(meta1);
-							            	   	inv.setItem(0, item1);
-							            	   	
-							            	   	ItemStack item1111 = new ItemStack(Material.STAINED_GLASS_PANE, 1,(byte) 13);
-							            	   	ItemMeta meta1111 = item1111.getItemMeta();
-							            	   	meta1111.setDisplayName("§1");
-							            	   	item1111.setItemMeta(meta1111);
-							            	   	inv.setItem(9, item1111);
-					            	   		}else if(slot == 3){
-					            	   			ItemStack item1 = new ItemStack(Material.STAINED_GLASS_PANE, 1,(byte) 14);
-							            	   	ItemMeta meta1 = item1.getItemMeta();
-							            	   	meta1.setDisplayName("§1");
-							            	   	item1.setItemMeta(meta1);
-							            	   	inv.setItem(2, item1);
-							            	   	
-							            	   	ItemStack item11 = new ItemStack(Material.STAINED_GLASS_PANE, 1,(byte) 14);
-							            	   	ItemMeta meta11 = item11.getItemMeta();
-							            	   	meta11.setDisplayName("§1");
-							            	   	item11.setItemMeta(meta11);
-							            	   	inv.setItem(18, item11);
-							            	   	p.playSound(p.getLocation(), Sound.DIG_STONE, 1F, 1F);
-					            	   		}else if(slot == 5){
-					            	   			ItemStack item1 = new ItemStack(Material.STAINED_GLASS_PANE, 1,(byte) 14);
-							            	   	ItemMeta meta1 = item1.getItemMeta();
-							            	   	meta1.setDisplayName("§1");
-							            	   	item1.setItemMeta(meta1);
-							            	   	inv.setItem(4, item1);
-					            	   		}else if(slot == 7){
-					            	   			ItemStack item1 = new ItemStack(Material.STAINED_GLASS_PANE, 1,(byte) 14);
-							            	   	ItemMeta meta1 = item1.getItemMeta();
-							            	   	meta1.setDisplayName("§1");
-							            	   	item1.setItemMeta(meta1);
-							            	   	inv.setItem(6, item1);
-							            	   	
-					            	   		}else if(slot == 8){
-					            	   			ItemStack item1 = new ItemStack(Material.STAINED_GLASS_PANE, 1,(byte) 14);
-							            	   	ItemMeta meta1 = item1.getItemMeta();
-							            	   	meta1.setDisplayName("§1");
-							            	   	item1.setItemMeta(meta1);
-							            	   	inv.setItem(8, item1);
-							            	   	
-							            	   	ItemStack item11111 = new ItemStack(Material.STAINED_GLASS_PANE, 1,(byte) 13);
-							            	   	ItemMeta meta11111 = item11111.getItemMeta();
-							            	   	meta11111.setDisplayName("§1");
-							            	   	item11111.setItemMeta(meta11111);
-							            	   	inv.setItem(17, item11111);
-							            	   	
-							            	   	ItemStack item111 = new ItemStack(Material.STAINED_GLASS_PANE, 1,(byte) 14);
-							            	   	ItemMeta meta111 = item111.getItemMeta();
-							            	   	meta111.setDisplayName("§1");
-							            	   	item111.setItemMeta(meta111);
-							            	   	inv.setItem(26, item111);
-							            	   	p.playSound(p.getLocation(), Sound.DIG_STONE, 1F, 1F);
-					            	   		}
-					            	   		slot++;
-					            	   }else{
-					            		   Bukkit.getScheduler().cancelTask(tasks.get(p.getName()));
-					            		   tasks.remove(p.getName());
-					            		   slot = 0;
-					            	   }
-					               }
-					        }, 30, 3));
 							
 							Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable(){
 								@Override
@@ -360,26 +281,6 @@ public class TokenShop implements Listener{
 							p.playSound(p.getLocation(), Sound.CHEST_OPEN, 1F, 1F);
 							p.openInventory(inv);
 					}
-			}
-		}
-	}
-	
-	@EventHandler
-	public void onInventoryClose(InventoryCloseEvent e){
-		Player p = (Player) e.getPlayer();
-		World w = Bukkit.getServer().getWorld(plugin.getConfig().getString("Snowball.Spawn1.Worldname"));
-		World w2 = p.getWorld();
-		File file = new File("plugins//SnowballFight//players.yml");
-		YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
-		int tokens = players.getInt("Players." + p.getName() + ".Tokens");
-		if(w == w2){
-			try{
-				if(e.getInventory().getName().equalsIgnoreCase("§8Shop | §eYour Tokens: §5" + tokens)){
-					Bukkit.getScheduler().cancelTask(tasks.get(p.getName()));
-					tasks.remove(p.getName());
-					slot = 0;
-				}
-			}catch(NullPointerException ex){
 			}
 		}
 	}

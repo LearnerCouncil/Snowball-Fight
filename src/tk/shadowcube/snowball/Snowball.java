@@ -26,14 +26,9 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
 
 import com.connorlinfoot.titleapi.TitleAPI;
 
-@SuppressWarnings("deprecation")
 public class Snowball implements Listener{
 
 	private main plugin;
@@ -42,8 +37,6 @@ public class Snowball implements Listener{
 		
 		p.getServer().getPluginManager().registerEvents(this, plugin);
 	}
-	int sched;
-	int sched2;
 	
 	@EventHandler
 	public void onCommand2(PlayerCommandPreprocessEvent e){
@@ -51,7 +44,7 @@ public class Snowball implements Listener{
 			World w = Bukkit.getServer().getWorld(plugin.getConfig().getString("Snowball.Spawn1.Worldname"));
 			World w2 = e.getPlayer().getWorld();
 			if(!(w == w2)){
-				updateScoreboard(e.getPlayer());
+				plugin.updateScoreboard(e.getPlayer());
 			}
 		}
 	}
@@ -114,6 +107,7 @@ public class Snowball implements Listener{
 								damage = damage - 0.25;
 							}
 							plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "effect " + p.getName() + " minecraft:blindness 6 0");
+							plugin.onHit(p);
 							e.setDamage(damage);
 						
 						}else{
@@ -139,10 +133,12 @@ public class Snowball implements Listener{
 									damage = damage - 0.25;
 								}
 								e.setDamage(damage);
+								plugin.onHit(p1);
 							}
 						}
 						}else{
 							shooter.sendMessage("§cYou can't kill yourself!");
+							plugin.onHit(p);
 							e.setDamage(0);
 					}
 				}
@@ -194,12 +190,7 @@ public class Snowball implements Listener{
 											for(Player p2: p.getWorld().getPlayers()){
 												p2.hidePlayer((Player) target);
 											}
-											Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){		
-												@Override
-												public void run() {
-													updateScoreboard(shooter);
-												}
-											}, 10);
+											plugin.updateScoreboard(shooter);
 									}
 								});
 								
@@ -275,7 +266,7 @@ public class Snowball implements Listener{
 				
 				p.setAllowFlight(false);
 				p.playSound(p.getLocation(), Sound.FIZZ, 1F, 1F);
-				clearScoreboard(p);
+				plugin.clearScoreboard(p);
 				File file = new File("plugins//SnowballFight//players.yml");
 				YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
 				
@@ -314,15 +305,9 @@ public class Snowball implements Listener{
 							p2.showPlayer(p);
 						}
 						p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1F, 1F);
+						plugin.updateScoreboard(p);
 					}
-				}, 80);	
-				
-				Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
-					@Override
-					public void run() {
-						updateScoreboard(p);
-					}
-				}, 90);
+				}, 80);
 			}
 		}, 10);
 	}
@@ -374,7 +359,7 @@ public class Snowball implements Listener{
 						Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
 							@Override
 							public void run() {
-								clearScoreboard(p);
+								plugin.clearScoreboard(p);
 							}
 						}, 15);
 					}else{
@@ -426,44 +411,4 @@ public class Snowball implements Listener{
 			}
 		}
 	}
-	
-	public void clearScoreboard(Player p) {
-        Scoreboard board = null;
-        board = p.getScoreboard();
-       
-        if(board == null)
-            return;
-       
-        Objective obj = board.getObjective("aaa");
-        if(obj != null)
-            obj.unregister();
-        board.clearSlot(DisplaySlot.SIDEBAR);
-        p.setScoreboard(board);
-    }
-	
-	public void updateScoreboard(Player p) {
-				File file = new File("plugins//SnowballFight//players.yml");
-				YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
-				int kills = players.getInt("Players." + p.getName() + ".Kills");
-				int deaths = players.getInt("Players." + p.getName() + ".Deaths");
-				Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
-				Objective obj = board.registerNewObjective("aaa", "bbb");
-				
-				obj.setDisplayName("§L§9[§7Snowball Fight!§9]§R");
-				obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-				
-				Score four = obj.getScore(Bukkit.getOfflinePlayer("§4§LKills§9: "));
-				Score three = obj.getScore(Bukkit.getOfflinePlayer("§a>§b " + kills + " §a<"));
-				Score two = obj.getScore(Bukkit.getOfflinePlayer("§4§LDeaths§9: "));
-				Score one = obj.getScore(Bukkit.getOfflinePlayer("§a>§b " + deaths + " §a<"));
-				Score zero = obj.getScore(Bukkit.getOfflinePlayer("§9=============§R"));
-				
-				four.setScore(4);
-				three.setScore(3);
-				two.setScore(2);
-				one.setScore(1);
-				zero.setScore(0);
-				
-				p.setScoreboard(board);
-			}
 }
