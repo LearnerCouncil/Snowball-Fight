@@ -69,7 +69,7 @@ public class main extends JavaPlugin{
 		private void initConfig(){
 			this.reloadConfig();
 			
-			this.getConfig().options().header("Snowball Fight! v.1.4");
+			this.getConfig().options().header("Snowball Fight! v.1.5");
 			this.getConfig().addDefault("Snowball.Spawn1.X", 0);
 			this.getConfig().addDefault("Snowball.Spawn1.Y", 0);
 			this.getConfig().addDefault("Snowball.Spawn1.Z", 0);
@@ -588,7 +588,7 @@ public class main extends JavaPlugin{
 						slot = 8;
 					}
 				}
-			}, 2, 2);
+			}, 2, 1);
 		}
 		
 		public void onHit(Player p){

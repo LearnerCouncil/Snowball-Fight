@@ -2,21 +2,25 @@ package tk.shadowcube.snowball;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffectType;
 
 import com.connorlinfoot.titleapi.TitleAPI;
@@ -86,6 +90,7 @@ public class KnifeKill implements Listener{
 	
 	public void Respawn(final Player p){
 		Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
+
 			@Override
 			public void run() {
 				p.spigot().respawn();
@@ -133,15 +138,32 @@ public class KnifeKill implements Listener{
 				p.setAllowFlight(false);
 				p.playSound(p.getLocation(), Sound.FIZZ, 1F, 1F);
 				plugin.clearScoreboard(p);
-				File file = new File("plugins//SnowballFight//players.yml");
-				YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
+				final File file = new File("plugins//SnowballFight//players.yml");
+				final YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
 				
-					players.set("Players." + p.getName() + ".Deaths", players.getInt("Players." + p.getName() + ".Deaths") + 1);
-					try {
-						players.save(file);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+				players.set("Players." + p.getName() + ".Deaths", players.getInt("Players." + p.getName() + ".Deaths") + 1);
+				if(p.getInventory().getHelmet() != null){
+					players.set("Players." + p.getName() + ".Armor.Helmet", true);
+					p.getInventory().setHelmet(null);
+				}
+				if(p.getInventory().getChestplate() != null){
+					players.set("Players." + p.getName() + ".Armor.Chestplate", true);
+					p.getInventory().setChestplate(null);
+				}
+				if(p.getInventory().getLeggings() != null){
+					players.set("Players." + p.getName() + ".Armor.Leggings", true);
+					p.getInventory().setLeggings(null);
+				}
+				if(p.getInventory().getBoots() != null){
+					players.set("Players." + p.getName() + ".Armor.Boots", true);
+					p.getInventory().setBoots(null);
+				}
+				try {
+					players.save(file);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
 				Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable(){
 					@Override
 					public void run() {
@@ -167,11 +189,70 @@ public class KnifeKill implements Listener{
 				Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
 					@Override
 					public void run() {
+						if(players.getBoolean("Players." + p.getName() + ".Armor.Helmet") == true){
+							ArrayList<String> lore = new ArrayList<>();
+							ItemStack item = new ItemStack(Material.LEATHER_HELMET);
+							LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
+							meta.setColor(Color.RED);
+							meta.setDisplayName("§eWoolly hat");
+							lore.add("§5So soft!");
+							lore.add("§5Reduced 10% of the suffered damage!");
+							meta.setLore(lore);
+							meta.addEnchant(Enchantment.DURABILITY, 10, true);
+							item.setItemMeta(meta);
+							p.getInventory().setHelmet(item);
+							players.set("Players." + p.getName() + ".Armor.Helmet", false);
+						}
+						if(players.getBoolean("Players." + p.getName() + ".Armor.Chestplate") == true){
+							ArrayList<String> lore1 = new ArrayList<>();
+							ItemStack item1 = new ItemStack(Material.LEATHER_CHESTPLATE);
+							LeatherArmorMeta meta1 = (LeatherArmorMeta) item1.getItemMeta();
+							meta1.setColor(Color.GREEN);
+							meta1.setDisplayName("§eWinter coat");
+							lore1.add("§5Oh...so warm!");
+							lore1.add("§5Reduced 10% of the suffered damage!");
+							meta1.setLore(lore1);
+							meta1.addEnchant(Enchantment.DURABILITY, 10, true);
+							item1.setItemMeta(meta1);
+							p.getInventory().setChestplate(item1);
+							players.set("Players." + p.getName() + ".Armor.Chestplate", false);
+						}
+						if(players.getBoolean("Players." + p.getName() + ".Armor.Leggings") == true){
+							ArrayList<String> lore11 = new ArrayList<>();
+							ItemStack item11 = new ItemStack(Material.LEATHER_LEGGINGS);
+							LeatherArmorMeta meta11 = (LeatherArmorMeta) item11.getItemMeta();
+							meta11.setColor(Color.WHITE);
+							meta11.setDisplayName("§eTrousers");
+							lore11.add("§5Reduced 10% of the suffered damage!");
+							meta11.setLore(lore11);
+							meta11.addEnchant(Enchantment.DURABILITY, 10, true);
+							item11.setItemMeta(meta11);
+							p.getInventory().setLeggings(item11);
+							players.set("Players." + p.getName() + ".Armor.Leggings", false);
+						}
+						if(players.getBoolean("Players." + p.getName() + ".Armor.Boots") == true){
+							ArrayList<String> lore111 = new ArrayList<>();
+							ItemStack item111 = new ItemStack(Material.LEATHER_BOOTS);
+							LeatherArmorMeta meta111 = (LeatherArmorMeta) item111.getItemMeta();
+							meta111.setColor(Color.RED);
+							meta111.setDisplayName("§eWinter boots");
+							lore111.add("§5Reduced 10% of the suffered damage!");
+							meta111.setLore(lore111);
+							meta111.addEnchant(Enchantment.DURABILITY, 10, true);
+							item111.setItemMeta(meta111);
+							p.getInventory().setBoots(item111);
+							players.set("Players." + p.getName() + ".Armor.Boots", false);
+						}
+						try {
+							players.save(file);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 						p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1F, 1F);
 						p.removePotionEffect(PotionEffectType.INVISIBILITY);
 						plugin.updateScoreboard(p);
 					}
-				}, 80);	
+				}, 80);
 			}
 		}, 10);
 	}
