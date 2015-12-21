@@ -1,0 +1,10 @@
+Shop:
+  Price:
+    Grenade: 8
+    Knife: 3
+    BlindnessBall: 2
+    WoolyHat: 4
+    WinterCoat: 4
+    Trousers: 4
+    WinterBoots: 4
+GrenadeDamage: 16.0

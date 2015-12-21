@@ -25,10 +25,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.potion.PotionEffectType;
+
 public class EventListener implements Listener{
 
 	private main plugin;
@@ -180,7 +178,7 @@ public class EventListener implements Listener{
 				@Override
 				public void run() {
 					e.getPlayer().performCommand("snowball join");
-					updateScoreboard(e.getPlayer());
+					plugin.updateScoreboard(e.getPlayer());
 				}
 			}, 20);
 		}
@@ -223,6 +221,7 @@ public class EventListener implements Listener{
 			YamlConfiguration players = YamlConfiguration.loadConfiguration(file1);
 			p.getInventory().clear();
 			p.getInventory().setArmorContents(null);
+			p.removePotionEffect(PotionEffectType.INVISIBILITY);
 			
 			players.set("Players." + p.getName() + ".Tokens", 0);
 			players.set("Players." + p.getName() + ".BlindnessBall", 0);
@@ -281,32 +280,5 @@ public class EventListener implements Listener{
 		}
 		} catch(NullPointerException ex){
 		}
-	}
-	
-	@SuppressWarnings("deprecation")
-	public void updateScoreboard(Player p) {
-		File file = new File("plugins//SnowballFight//players.yml");
-		YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
-		int kills = players.getInt("Players." + p.getName() + ".Kills");
-		int deaths = players.getInt("Players." + p.getName() + ".Deaths");
-		Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
-		Objective obj = board.registerNewObjective("aaa", "bbb");
-		
-		obj.setDisplayName("§L§9[§7Snowball Fight!§9]§R");
-		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		
-		Score four = obj.getScore(Bukkit.getOfflinePlayer("§4§LKills§9: "));
-		Score three = obj.getScore(Bukkit.getOfflinePlayer("§a>§b " + kills + " §a<"));
-		Score two = obj.getScore(Bukkit.getOfflinePlayer("§4§LDeaths§9: "));
-		Score one = obj.getScore(Bukkit.getOfflinePlayer("§a>§b " + deaths + " §a<"));
-		Score zero = obj.getScore(Bukkit.getOfflinePlayer("§9=============§R"));
-		
-		four.setScore(4);
-		three.setScore(3);
-		two.setScore(2);
-		one.setScore(1);
-		zero.setScore(0);
-		
-		p.setScoreboard(board);
 	}
 }

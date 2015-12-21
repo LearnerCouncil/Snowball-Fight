@@ -1,0 +1,22 @@
+# Snowball Fight! v.1.4
+Snowball:
+  Spawn1:
+    X: -138.38933820885467
+    Y: 76.0
+    Z: -26.950728525474435
+    Pitch: 27.09393
+    Yaw: -27.28241
+    Worldname: world
+  Spawn2:
+    X: -131.99181606512417
+    Y: 75.0
+    Z: -27.550125461364473
+    Pitch: 33.688267
+    Yaw: -0.72681534
+    Worldname: world
+  EnableBuild: false
+  EnableAttackDamage: true
+  ChanceToBecomeAToken: 65
+  AmountOfTokens: 3
+  EnableBungeecord: false
+  Fallbackserver: hub

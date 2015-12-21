@@ -26,6 +26,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffectType;
 
 import com.connorlinfoot.titleapi.TitleAPI;
 
@@ -160,7 +161,6 @@ public class Snowball implements Listener{
 								
 							Random rand = new Random();
 							final int chance = rand.nextInt(100);
-							
 							final Player p = (Player) target;
 							final Player shooter = (Player) ((Projectile) e.getDamager()).getShooter();
 							shooter.playSound(shooter.getLocation(), Sound.ORB_PICKUP, 1F, 1F);
@@ -171,7 +171,6 @@ public class Snowball implements Listener{
 							p.sendMessage("§7You was §4killed §7by §e" + shooter.getName() + "§7!");
 							
 								Bukkit.getScheduler().runTask(plugin, new Runnable(){
-
 									@Override
 									public void run() {
 											File file = new File("plugins//SnowballFight//players.yml");
@@ -185,10 +184,6 @@ public class Snowball implements Listener{
 												players.save(file);
 											} catch (IOException e) {
 												e.printStackTrace();
-											}
-											
-											for(Player p2: p.getWorld().getPlayers()){
-												p2.hidePlayer((Player) target);
 											}
 											plugin.updateScoreboard(shooter);
 									}
@@ -281,6 +276,7 @@ public class Snowball implements Listener{
 					@Override
 					public void run() {
 						TitleAPI.sendTitle(p, 0, 20, 0, "§a3",null);
+						plugin.Invisbility(p);
 					}
 				}, 20);
 				
@@ -301,10 +297,8 @@ public class Snowball implements Listener{
 				Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
 					@Override
 					public void run() {
-						for(Player p2: p.getWorld().getPlayers()){
-							p2.showPlayer(p);
-						}
 						p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1F, 1F);
+						p.removePotionEffect(PotionEffectType.INVISIBILITY);
 						plugin.updateScoreboard(p);
 					}
 				}, 80);
@@ -329,6 +323,7 @@ public class Snowball implements Listener{
 						YamlConfiguration players = YamlConfiguration.loadConfiguration(file1);
 						p.getInventory().clear();
 						p.getInventory().setArmorContents(null);
+						p.removePotionEffect(PotionEffectType.INVISIBILITY);
 				
 						players.set("Players." + p.getName() + ".Tokens", 0);
 						players.set("Players." + p.getName() + ".BlindnessBall", 0);
@@ -370,6 +365,7 @@ public class Snowball implements Listener{
 						YamlConfiguration players = YamlConfiguration.loadConfiguration(file1);
 						p.getInventory().clear();
 						p.getInventory().setArmorContents(null);
+						p.removePotionEffect(PotionEffectType.INVISIBILITY);
 				
 						players.set("Players." + p.getName() + ".Tokens", 0);
 						players.set("Players." + p.getName() + ".BlindnessBall", 0);

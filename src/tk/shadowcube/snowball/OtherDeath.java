@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import com.connorlinfoot.titleapi.TitleAPI;
 
@@ -70,10 +71,6 @@ public class OtherDeath implements Listener{
 									} catch (IOException e) {
 										e.printStackTrace();
 									}
-									
-									for(Player p2: p.getWorld().getPlayers()){
-										p2.hidePlayer((Player) p);
-									}
 									plugin.updateScoreboard(killer);
 									Respawn(p);
 							}
@@ -86,10 +83,8 @@ public class OtherDeath implements Listener{
 	
 	public void Respawn(final Player p){
 		Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
-
 			@Override
 			public void run() {
-				
 				p.spigot().respawn();
 				Random rand = new Random();
 				int spawnpoint = rand.nextInt(2);
@@ -144,11 +139,12 @@ public class OtherDeath implements Listener{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				
+					
 				Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable(){
 					@Override
 					public void run() {
 						TitleAPI.sendTitle(p, 0, 20, 0, "§a3",null);
+						plugin.Invisbility(p);
 					}
 				}, 20);
 				
@@ -169,10 +165,8 @@ public class OtherDeath implements Listener{
 				Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
 					@Override
 					public void run() {
-						for(Player p2: p.getWorld().getPlayers()){
-							p2.showPlayer(p);
-						}
 						p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1F, 1F);
+						p.removePotionEffect(PotionEffectType.INVISIBILITY);
 						plugin.updateScoreboard(p);
 					}
 				}, 80);	

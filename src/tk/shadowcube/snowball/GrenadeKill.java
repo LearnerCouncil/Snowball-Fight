@@ -28,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.potion.PotionEffectType;
 
 import com.connorlinfoot.titleapi.TitleAPI;
 
@@ -119,7 +120,7 @@ public class GrenadeKill implements Listener{
             				 if(player != null) {
             					 if(event.getDamage() >= ((LivingEntity) target).getHealth()) {
             						 if(target instanceof Player){
-            						 	Player dead = (Player)target;
+            						 	final Player dead = (Player)target;
             						 	if(!player.getName().equals(dead.getName())){
             						 		player.sendMessage("§7You §akilled §e" + (target instanceof Player ? ((Player) target).getName() : ((LivingEntity) target).getType()) + "§7!");
             						 		dead.sendMessage("§7You was §4killed §7by §e" + player.getName() + "§7!");
@@ -156,10 +157,6 @@ public class GrenadeKill implements Listener{
          											}
             									}
  											}
- 											
- 											for(Player p2: p.getWorld().getPlayers()){
- 												p2.hidePlayer((Player) target);
- 											}
  											plugin.updateScoreboard(player);
 										}
             						 });
@@ -187,7 +184,6 @@ public class GrenadeKill implements Listener{
     
 	public void Respawn(final Player p){
 		Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
-
 			@Override
 			public void run() {
 				p.spigot().respawn();
@@ -244,11 +240,12 @@ public class GrenadeKill implements Listener{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				
+					
 				Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable(){
 					@Override
 					public void run() {
 						TitleAPI.sendTitle(p, 0, 20, 0, "§a3",null);
+						plugin.Invisbility(p);
 					}
 				}, 20);
 				
@@ -269,10 +266,8 @@ public class GrenadeKill implements Listener{
 				Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
 					@Override
 					public void run() {
-						for(Player p2: p.getWorld().getPlayers()){
-							p2.showPlayer(p);
-						}
 						p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1F, 1F);
+						p.removePotionEffect(PotionEffectType.INVISIBILITY);
 						plugin.updateScoreboard(p);
 					}
 				}, 80);	

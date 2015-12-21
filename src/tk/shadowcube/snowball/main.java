@@ -2,7 +2,6 @@ package tk.shadowcube.snowball;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -16,6 +15,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -50,12 +51,13 @@ public class main extends JavaPlugin{
 		JoinCoord();
 		Shop();
 		
-		HashMap<World, String> worldsFeedBack = new HashMap<World, String>();
-        for(World world : Bukkit.getWorlds()){
-            worldsFeedBack.put(world, world.getGameRuleValue("sendCommandFeedback"));
-            world.setGameRuleValue("sendCommandFeedback", "false");
-        }
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        
+        if(getServer().getPluginManager().getPlugin("TitleAPI") == null){
+        	System.out.println("[SnowballFight] TitleAPI not found!");
+        	System.out.println("[SnowballFight] Disable plugin...");
+        	Bukkit.getPluginManager().disablePlugin(this);
+        }
 	}
 	
 	/*TODO:
@@ -67,7 +69,7 @@ public class main extends JavaPlugin{
 		private void initConfig(){
 			this.reloadConfig();
 			
-			this.getConfig().options().header("Snowball Fight! v.1.3");
+			this.getConfig().options().header("Snowball Fight! v.1.4");
 			this.getConfig().addDefault("Snowball.Spawn1.X", 0);
 			this.getConfig().addDefault("Snowball.Spawn1.Y", 0);
 			this.getConfig().addDefault("Snowball.Spawn1.Z", 0);
@@ -118,7 +120,6 @@ public class main extends JavaPlugin{
 				try{
 				file.createNewFile();
 				} catch(IOException e){
-					
 				}
 			}
 			
@@ -595,6 +596,15 @@ public class main extends JavaPlugin{
 			loc.setY(loc.getY() + 1);
 			
 			p.getWorld().playEffect(loc, Effect.STEP_SOUND, Material.REDSTONE_BLOCK, 5);
+		}
+		
+		public void Invisbility(final Player p){
+			Bukkit.getScheduler().runTask(this, new Runnable(){
+				@Override
+				public void run() {
+					p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 90, 0));
+				}
+			});
 		}
 		
 		public void clearScoreboard(Player p) {

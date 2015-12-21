@@ -17,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffectType;
 
 import com.connorlinfoot.titleapi.TitleAPI;
 
@@ -74,14 +75,9 @@ public class KnifeKill implements Listener{
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
-							
-							for(Player p2: p.getWorld().getPlayers()){
-								p2.hidePlayer(target);
-							}
 							plugin.updateScoreboard(p);
 						}
 					});
-					
 					Respawn(target);
 				}
 			}
@@ -90,10 +86,8 @@ public class KnifeKill implements Listener{
 	
 	public void Respawn(final Player p){
 		Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
-
 			@Override
 			public void run() {
-				
 				p.spigot().respawn();
 				Random rand = new Random();
 				int spawnpoint = rand.nextInt(2);
@@ -148,11 +142,11 @@ public class KnifeKill implements Listener{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				
 				Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, new Runnable(){
 					@Override
 					public void run() {
 						TitleAPI.sendTitle(p, 0, 20, 0, "§a3",null);
+						plugin.Invisbility(p);
 					}
 				}, 20);
 				
@@ -173,10 +167,8 @@ public class KnifeKill implements Listener{
 				Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
 					@Override
 					public void run() {
-						for(Player p2: p.getWorld().getPlayers()){
-							p2.showPlayer(p);
-						}
 						p.playSound(p.getLocation(), Sound.ENDERMAN_TELEPORT, 1F, 1F);
+						p.removePotionEffect(PotionEffectType.INVISIBILITY);
 						plugin.updateScoreboard(p);
 					}
 				}, 80);	
