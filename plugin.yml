@@ -1,6 +1,6 @@
 name: SnowballFight
 main: tk.shadowcube.snowball.main
-version: 1.5
+version: 1.6
 author: Shadowsky
 commands:
   snowball:

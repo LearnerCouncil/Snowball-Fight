@@ -86,15 +86,12 @@ public class EventListener implements Listener{
 						if(p.getItemInHand().getType() == Material.DIAMOND_SPADE){
 							e.setDamage((double) 0);
 						}
-						
 						if(p.getItemInHand().getTypeId() == 332){
 							e.setDamage((double) 0);
 						}
-						
 						if(p.getItemInHand().getType() == Material.SLIME_BALL){
 							e.setDamage((double) 0);
 						}
-						
 						if(p.getItemInHand().getType() == Material.AIR){
 							e.setDamage((double) 0);
 						}
