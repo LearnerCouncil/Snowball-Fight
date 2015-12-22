@@ -17,10 +17,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
 
 public class SnowMan implements Listener{
 
@@ -84,36 +80,9 @@ public class SnowMan implements Listener{
 			if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§8Snowball Fight!")){
 				e.setCancelled(true);
 				p.performCommand("snowball join");
-				updateScoreboard(p);
+				plugin.updateScoreboard(p);
 			}
 			} catch(NullPointerException ex){
 			}
-	}
-	
-	@SuppressWarnings("deprecation")
-	public void updateScoreboard(Player p) {
-		File file = new File("plugins//SnowballFight//players.yml");
-		YamlConfiguration players = YamlConfiguration.loadConfiguration(file);
-		int kills = players.getInt("Players." + p.getName() + ".Kills");
-		int deaths = players.getInt("Players." + p.getName() + ".Deaths");
-		Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
-		Objective obj = board.registerNewObjective("aaa", "bbb");
-		
-		obj.setDisplayName("§L§9[§7Snowball Fight!§9]§R");
-		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-		
-		Score four = obj.getScore(Bukkit.getOfflinePlayer("§4§LKills§9: "));
-		Score three = obj.getScore(Bukkit.getOfflinePlayer("§a>§b " + kills + " §a<"));
-		Score two = obj.getScore(Bukkit.getOfflinePlayer("§4§LDeaths§9: "));
-		Score one = obj.getScore(Bukkit.getOfflinePlayer("§a>§b " + deaths + " §a<"));
-		Score zero = obj.getScore(Bukkit.getOfflinePlayer("§9=============§R"));
-		
-		four.setScore(4);
-		three.setScore(3);
-		two.setScore(2);
-		one.setScore(1);
-		zero.setScore(0);
-		
-		p.setScoreboard(board);
 	}
 }
