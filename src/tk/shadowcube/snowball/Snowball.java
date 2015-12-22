@@ -48,7 +48,9 @@ public class Snowball implements Listener{
 			World w = Bukkit.getServer().getWorld(plugin.getConfig().getString("Snowball.Spawn1.Worldname"));
 			World w2 = e.getPlayer().getWorld();
 			if(!(w == w2)){
-				plugin.updateScoreboard(e.getPlayer());
+				if(e.getPlayer().hasPermission("snowball.join")){
+					plugin.updateScoreboard(e.getPlayer());
+				}
 			}
 		}
 	}

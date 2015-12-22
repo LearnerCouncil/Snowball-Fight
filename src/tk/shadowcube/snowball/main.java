@@ -45,6 +45,7 @@ public class main extends JavaPlugin{
 		new SnowMan(this);
 		new UpdateShop(this);
 		new ShopTheme(this);
+		new JoinSign(this);
 		
 		initConfig();
 		Player();
@@ -63,7 +64,7 @@ public class main extends JavaPlugin{
 		private void initConfig(){
 			this.reloadConfig();
 			
-			this.getConfig().options().header("Snowball Fight! v.1.7");
+			this.getConfig().options().header("Snowball Fight! v.1.8");
 			this.getConfig().addDefault("Snowball.Spawn1.X", 0);
 			this.getConfig().addDefault("Snowball.Spawn1.Y", 0);
 			this.getConfig().addDefault("Snowball.Spawn1.Z", 0);

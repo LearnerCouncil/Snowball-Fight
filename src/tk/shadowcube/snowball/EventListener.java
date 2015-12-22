@@ -46,13 +46,13 @@ public class EventListener implements Listener{
 		if(w == w2){
 			if(plugin.getConfig().getBoolean("Snowball.EnableBuild") == false){
 				e.setCancelled(true);
-			if(e.getBlock().getType() == Material.SNOW){
-				ItemStack item = new ItemStack(332);
-				ItemMeta meta = item.getItemMeta();
-				meta.setDisplayName("§7Snowball");
-				item.setItemMeta(meta);				
-				p.getInventory().addItem(item);
-			}
+				if(e.getBlock().getType() == Material.SNOW){
+					ItemStack item = new ItemStack(332);
+					ItemMeta meta = item.getItemMeta();
+					meta.setDisplayName("§7Snowball");
+					item.setItemMeta(meta);				
+					p.getInventory().addItem(item);
+				}
 			}
 		}
 	}

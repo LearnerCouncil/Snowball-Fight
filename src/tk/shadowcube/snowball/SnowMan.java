@@ -79,8 +79,12 @@ public class SnowMan implements Listener{
 		try{
 			if(e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§8Snowball Fight!")){
 				e.setCancelled(true);
-				p.performCommand("snowball join");
-				plugin.updateScoreboard(p);
+				if(p.hasPermission("snowball.join")){
+					p.performCommand("snowball join");
+					plugin.updateScoreboard(p);
+				}else{
+					p.sendMessage("§4Sorry! You don't have enough permission!");
+				}
 			}
 			} catch(NullPointerException ex){
 			}
